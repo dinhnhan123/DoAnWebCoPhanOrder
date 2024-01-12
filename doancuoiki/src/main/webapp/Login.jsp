@@ -17,32 +17,106 @@
     </head>
     <body>
         <div id="logreg-forms">
-            <form class="form-signin" action="login" method="post">
-                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Sign In</h1>
-                <p class="text-danger">${mess}</p>
-                <input name="user"  type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
-                <input name="pass"  type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+            <c:if test="${messSignUp == null && mess == null}">
+                <form class="form-signin" action="login" method="post">
+                    <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Sign In</h1>
+                    <p class="text-danger">${mess}</p>
+                    <input name="user"  type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
+                    <input name="pass"  type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
 
-                <div class="form-group form-check">
-                    <input name="remember" value="1" type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Remember me</label>
-                </div>
+                    <div class="form-group form-check">
+                        <input name="remember" value="1" type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Remember me</label>
+                    </div>
 
-                <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
-                <hr>
-                <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
-            </form>
+                    <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+                    <hr>
+                    <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
+                </form>
+                <form action="signup" method="post" class="form-signup" style="display: none">
+                    <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign Up</h1>
+                    <p class="text-danger">${messSignUp}</p>
+                    <input name="user" type="text" id="user-name" class="form-control" placeholder="User name" required="" autofocus="">
+                    <input name="pass" type="password" id="user-pass" class="form-control" placeholder="Password" required autofocus="">
+                    <input name="repass" type="password" id="user-repeatpass" class="form-control" placeholder="Repeat Password" required autofocus="">
+                    <input name="fullname" type="text" id="fullname" class="form-control" placeholder="Full name" required="" autofocus="">
+                    <input name="email" type="email" id="email" class="form-control" placeholder="Email" required="" autofocus="">
+                    <input name="phone" type="tel" id="phone" class="form-control" placeholder="Phone" required="" autofocus="">
+                    <textarea name="address" class="form-control" id="address" placeholder="Address" required="" autofocus=""></textarea>
+                    <textarea name="note" class="form-control" id="note" placeholder="Note" autofocus=""></textarea>
+                    <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
+                    <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Back</a>
+                </form>
+            </c:if>
+            <c:if test="${messSignUp != null || mess != null}">
+                <c:if test="${messSignUp != null}">
+                    <form class="form-signin" action="login" method="post" style="display: none">
+                        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Sign In</h1>
+                        <p class="text-danger">${mess}</p>
+                        <input name="user"  type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
+                        <input name="pass"  type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
 
-            <form action="signup" method="post" class="form-signup">
-                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign Up</h1>
-                <p class="text-danger">${mess}</p>
-                <input name="user" type="text" id="user-name" class="form-control" placeholder="User name" required="" autofocus="">
-                <input name="pass" type="password" id="user-pass" class="form-control" placeholder="Password" required autofocus="">
-                <input name="repass" type="password" id="user-repeatpass" class="form-control" placeholder="Repeat Password" required autofocus="">
+                        <div class="form-group form-check">
+                            <input name="remember" value="1" type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Remember me</label>
+                        </div>
 
-                <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
-                <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Back</a>
-            </form>
+                        <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+                        <hr>
+                        <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
+                    </form>
+                </c:if>
+                <c:if test="${messSignUp == null}">
+                    <form class="form-signin" action="login" method="post">
+                        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Sign In</h1>
+                        <p class="text-danger">${mess}</p>
+                        <input name="user"  type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
+                        <input name="pass"  type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+
+                        <div class="form-group form-check">
+                            <input name="remember" value="1" type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Remember me</label>
+                        </div>
+
+                        <button class="btn btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+                        <hr>
+                        <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
+                    </form>
+                </c:if>
+
+                <c:if test="${mess != null}">
+                    <form action="signup" method="post" class="form-signup" style="display: none">
+                        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign Up</h1>
+                        <p class="text-danger">${messSignUp}</p>
+                        <input name="user" type="text" id="user-name" class="form-control" placeholder="User name" required="" autofocus="">
+                        <input name="pass" type="password" id="user-pass" class="form-control" placeholder="Password" required autofocus="">
+                        <input name="repass" type="password" id="user-repeatpass" class="form-control" placeholder="Repeat Password" required autofocus="">
+                        <input name="fullname" type="text" id="fullname" class="form-control" placeholder="Full name" required="" autofocus="">
+                        <input name="email" type="email" id="email" class="form-control" placeholder="Email" required="" autofocus="">
+                        <input name="phone" type="tel" id="phone" class="form-control" placeholder="Phone" required="" autofocus="">
+                        <textarea name="address" class="form-control" id="address" placeholder="Address" required="" autofocus=""></textarea>
+                        <textarea name="note" class="form-control" id="note" placeholder="Note" autofocus=""></textarea>
+                        <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
+                        <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Back</a>
+                    </form>
+                </c:if>
+                <c:if test="${mess == null}">
+                    <form action="signup" method="post" class="form-signup">
+                        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign Up</h1>
+                        <p class="text-danger">${messSignUp}</p>
+                        <input name="user" type="text" id="user-name" class="form-control" placeholder="User name" required="" autofocus="">
+                        <input name="pass" type="password" id="user-pass" class="form-control" placeholder="Password" required autofocus="">
+                        <input name="repass" type="password" id="user-repeatpass" class="form-control" placeholder="Repeat Password" required autofocus="">
+                        <input name="fullname" type="text" id="fullname" class="form-control" placeholder="Full name" required="" autofocus="">
+                        <input name="email" type="email" id="email" class="form-control" placeholder="Email" required="" autofocus="">
+                        <input name="phone" type="tel" id="phone" class="form-control" placeholder="Phone" required="" autofocus="">
+                        <textarea name="address" class="form-control" id="address" placeholder="Address" required="" autofocus=""></textarea>
+                        <textarea name="note" class="form-control" id="note" placeholder="Note" autofocus=""></textarea>
+                        <button class="btn btn-primary btn-block" type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
+                        <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Back</a>
+                    </form>
+                </c:if>
+            </c:if>
             <br>
 
         </div>

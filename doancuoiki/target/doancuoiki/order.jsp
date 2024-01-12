@@ -22,26 +22,26 @@
     <div class="client-information w-50 mr-3">
         <form class="form-order" action="order" method="post">
         <h2>THÔNG TIN KHÁCH HÀNG</h2>
-
+            <c:if test="${mess != null}">
+            <div class="alert alert-danger">
+                Key không hợp lệ
+            </div>
+            </c:if>
             <div class="form-group">
                 <label for="fullname">Họ và tên:</label>
-                <input type="text" name="fullname" id="fullname" class="form-control">
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" name="email" id="email" class="form-control">
+                <input type="text" name="fullname" id="fullname" class="form-control" value="${customer.fullname}">
             </div>
             <div class="form-group">
                 <label for="address">Địa chỉ:</label>
-                <input type="text" name="address" id="address" class="form-control">
+                <input type="text" name="address" id="address" class="form-control" value="${customer.address}">
             </div>
             <div class="form-group">
                 <label for="num_phone">SĐT:</label>
-                <input type="tel" name="num_phone" id="num_phone" class="form-control">
+                <input type="tel" name="num_phone" id="num_phone" class="form-control" value="${customer.num_phone}">
             </div>
             <div class="form-group">
-                <label for="note">Ghi chú:</label>
-                <textarea class="form-control" id="note" name="note" rows="4"></textarea>
+                <label for="key">Key:</label>
+                <textarea name="key" id="key" class="form-control" required></textarea>
             </div>
             <a href="homeControl">Quay lại trang chủ!</a>
     </div>
@@ -80,6 +80,11 @@
 
         </div>
     </div>
-
+    <c:if test="${error != null}">
+        <script>
+            alert("Chưa có sản phẩm trong giỏ hàng!");
+            document.location.href = "/doancuoiki";
+        </script>
+    </c:if>
 </body>
 </html>

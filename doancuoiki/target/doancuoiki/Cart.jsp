@@ -111,7 +111,7 @@
                                             <h5 class="font-weight-bold">${order.numberFormat(order.gettotal())} <strong>VND</strong></h5>
 
                                         </li>
-                                    </ul><a  class="btn btn-dark rounded-pill py-2 btn-block"  href="order.jsp">Thanh Toán</a>
+                                    </ul><a  class="btn btn-dark rounded-pill py-2 btn-block"  href="order">Thanh Toán</a>
 
                                 </div>
                             </div>

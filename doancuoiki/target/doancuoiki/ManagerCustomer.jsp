@@ -23,13 +23,13 @@
   <table class="table table-dark table-striped">
     <thead>
     <tr>
-      <th scope="col">STT</th>
       <th scope="col">Id khách hàng</th>
       <th scope="col">Họ và tên</th>
       <th scope="col">Email</th>
       <th scope="col">Địa chỉ </th>
       <th scope="col">Số điện thoại </th>
       <th scope="col">ghi chú </th>
+      <th scope="col">Hành động</th>
     </tr>
     </thead>
     <tbody>
@@ -37,13 +37,17 @@
     <c:forEach items="${list}" var="o">
       <c:set var="counter" value="${counter + 1}" />
       <tr>
-        <th scope="row">${counter}</th>
         <td>${o.customer_id}</td>
         <td>${o.fullname}</td>
         <td>${o.email}</td>
         <td>${o.address}</td>
         <td>${o.num_phone}</td>
         <td>${o.note}</td>
+        <td>
+          <button data-id="${o.customer_id}" class="btn btn-success createKey">Tạo mới key</button>
+          <button data-id="${o.customer_id}" class="btn btn-danger disableKey">Vô hiệu hóa key</button>
+          <a href="showkey?user=${o.account.user}" class="btn btn-primary">Xem key</a>
+        </td>
 
       </tr>
     </c:forEach>
@@ -51,5 +55,35 @@
   </table>
   <a href="http://localhost:8080/doancuoiki/homeControl" style="text-decoration: underline">Trang chủ</a>
 </div>
+
+<script>
+  $(".createKey").on("click", function (){
+    var btn = $(this);
+    $.ajax({
+      url: "/doancuoiki/createkey?id=" + btn.data("id"),
+      method: "GET",
+      success: (rs) => {
+        alert("Tạo mới key thành công!");
+      },
+      error: (rs) => {
+        alert("Tạo key thất bại!");
+        console.log(rs);
+      }
+    });
+  })
+  $(".disableKey").on("click", function (){
+    var btn = $(this);
+    $.ajax({
+      url: "/doancuoiki/disablekey?id=" + btn.data("id"),
+      method: "GET",
+      success: (rs) => {
+        alert("Đã vô hiệu hóa key!");
+      },
+      error: (rs) => {
+        console.log(rs);
+      }
+    });
+  })
+</script>
 </body>
 </html>

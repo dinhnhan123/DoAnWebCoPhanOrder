@@ -2,7 +2,9 @@ package Dao;
 
 import DBConnect.DBcontext;
 import model.*;
+import utils.RSA;
 
+import java.security.KeyPair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -205,19 +207,134 @@ public class Dao {
         }
         return null;
     }
-    public void signUp(String user,String pass){
-            String query = "INSERT INTO account(`user`,pass,isSell,isAdmin)\n" +
-                    "VALUES(?,?,0,0);";
+
+    public Account  getUserByUserName(String user){
+        String query = "SELECT * FROM account WHERE user = ?";
+        try{
+            conn = new DBcontext().getConnection();// mở kết nối với mysql
+            ps = conn.prepareStatement(query); // ném câu lệnh query sang mysq
+            // cuối cùng mình sẽ chạy câu lệnh query này và sẽ trả về kết quả đó la rs
+            ps.setString(1,user); // truyền user vào dấu chấm hỏi thứ nhất
+            rs = ps.executeQuery(); // như vậy nó sẽ chạy câu lệnh query này
+            while (rs.next()){
+                return  new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getInt(8),
+                        rs.getBoolean(9));
+
+
+            }
+
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
+    public Account  getUserByCustomerID(int customerID){
+        String query = "SELECT * FROM account WHERE customer_id = ?";
+        try{
+            conn = new DBcontext().getConnection();// mở kết nối với mysql
+            ps = conn.prepareStatement(query); // ném câu lệnh query sang mysq
+            // cuối cùng mình sẽ chạy câu lệnh query này và sẽ trả về kết quả đó la rs
+            ps.setInt(1,customerID); // truyền user vào dấu chấm hỏi thứ nhất
+            rs = ps.executeQuery(); // như vậy nó sẽ chạy câu lệnh query này
+            while (rs.next()){
+                return  new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getInt(8),
+                        rs.getBoolean(9));
+
+
+            }
+
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
+    public void createKey(int customerID){
+        String query = "UPDATE account SET publicKey = ?, privateKey = ?, status = ? WHERE customer_id = ?";
+        try{
+            KeyPair key = RSA.createKey();
+            String publicKey = RSA.createPublicKey(key);
+            String privateKey = RSA.createPrivateKey(key);
+            conn = new DBcontext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, publicKey);
+            ps.setString(2, privateKey);
+            ps.setBoolean(3, true);
+            ps.setInt(4,customerID);
+            ps.executeUpdate();
+        }catch (Exception e){
+
+        }
+    }
+
+    public void disableKey(int customerID){
+        String query = "UPDATE account SET status = ? WHERE customer_id = ?";
+        try{
+            conn = new DBcontext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setBoolean(1, false);
+            ps.setInt(2,customerID);
+            ps.executeUpdate();
+        }catch (Exception e){
+
+        }
+    }
+
+    public void signUp(String user,String pass, String fullname, String email, String phone, String address, String note){
         try{
           conn = new DBcontext().getConnection();// mở kết nối với mysql
-          ps = conn.prepareStatement(query); // ném câu lệnh query sang mysq
-          // cuối cùng mình sẽ chạy câu lệnh query này và sẽ trả về kết quả đó la rs
-          ps.setString(1,user);
-          ps.setString(2,pass);
-          // truyền user vào dấu chấm hỏi thứ nhất
-          ps.executeUpdate();
+            String query = "INSERT INTO customer(fullname,email,address,num_phone,note)\n" +
+                    "VALUES(?,?,?,?,?);";
+            ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, fullname);
+            ps.setString(2, email);
+            ps.setString(3, address);
+            ps.setString(4, phone);
+            ps.setString(5, note);
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating customer failed, no rows affected.");
+            }
+            int generatedId = -1;
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    generatedId = generatedKeys.getInt(1); // Lấy ID của khách hàng vừa được thêm
+                } else {
+                    throw new SQLException("Creating customer failed, no ID obtained.");
+                }
+            }
+            if(generatedId != -1){
+                KeyPair key = RSA.createKey();
+                String publicKey = RSA.createPublicKey(key);
+                String privateKey = RSA.createPrivateKey(key);
+                query = "INSERT INTO account(user,pass,isSell,isAdmin,publicKey,privateKey,customer_id,status)\n" +
+                        "VALUES(?,?,0,0,?,?,?,1);";
+                ps = conn.prepareStatement(query);
+                ps.setString(1,user);
+                ps.setString(2,pass);
+                ps.setString(3,publicKey);
+                ps.setString(4,privateKey);
+                ps.setInt(5,generatedId);
+                // truyền user vào dấu chấm hỏi thứ nhất
+                ps.executeUpdate();
+            }
       }catch (Exception e){
-
+        e.printStackTrace();
       }
 
     }
@@ -258,9 +375,9 @@ public class Dao {
 
         return generatedId; // Trả về ID của khách hàng vừa được thêm
     }
-    public int insert_order(int id_customer, int total_amount, int total_product_quantity, String payment_method, String address, String order_code,String fullname) {
-        String query = "INSERT INTO `order`(`customer_id`, `total_amount`, `total_product_quantity`, `payment_method`, `shipping _address`, `order_code`,`fullname`) " +
-                "VALUES (?,?,?,?,?,?,?) " ;
+    public int insert_order(int id_customer, int total_amount, int total_product_quantity, String payment_method, String address, String order_code,String fullname,String phone) {
+        String query = "INSERT INTO `order`(`customer_id`, `total_amount`, `total_product_quantity`, `payment_method`, `shipping _address`, `order_code`,`fullname`,num_phone) " +
+                "VALUES (?,?,?,?,?,?,?,?) " ;
 
         int generatedId = -1; // Giá trị mặc định nếu không thể lấy được ID
 
@@ -275,6 +392,7 @@ public class Dao {
             ps.setString(5, address);
             ps.setString(6, order_code);
             ps.setString(7, fullname);
+            ps.setString(8, phone);
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
@@ -290,6 +408,7 @@ public class Dao {
             }
         } catch (Exception e) {
             // Xử lý ngoại lệ
+            e.printStackTrace();
         } finally {
             // Đóng kết nối và tài nguyên
             // ...
@@ -396,7 +515,8 @@ public class Dao {
                         rs.getString(6),
                         rs.getString(7),
                         rs.getString(8),
-                        rs.getString(9)
+                        rs.getString(9),
+                        rs.getString(10)
                        ));
             }
 
@@ -407,11 +527,36 @@ public class Dao {
     }
     public List<Customer> getListCustomer(){
         List<Customer> list = new ArrayList<>();
-        String query = "SELECT * FROM `customer`" ;
+        String query = "SELECT customer.* FROM customer JOIN account ON account.customer_id = customer.customer_id" ;
         try{
             conn = new DBcontext().getConnection();// mở kết nối với mysql
             ps = conn.prepareStatement(query); // ném câu lệnh query sang mysq
             // cuối cùng mình sẽ thực thi  câu lệnh query này và sẽ trả về kết quả đó la rs
+            ResultSet rs = ps.executeQuery();// như vậy nó sẽ chạy câu lệnh query này
+            while (rs.next()){
+                list.add(new Customer(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        getUserByCustomerID(rs.getInt(1))));
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Customer> getCustomerByID(int id){
+        List<Customer> list = new ArrayList<>();
+        String query = "SELECT * FROM customer WHERE customer_id = ?";
+        try{
+            conn = new DBcontext().getConnection();// mở kết nối với mysql
+            ps = conn.prepareStatement(query); // ném câu lệnh query sang mysq
+            // cuối cùng mình sẽ thực thi  câu lệnh query này và sẽ trả về kết quả đó la rs
+            ps.setInt(1, id);
             rs = ps.executeQuery(); // như vậy nó sẽ chạy câu lệnh query này
             while (rs.next()){
                 list.add(new Customer(rs.getInt(1),
@@ -419,7 +564,8 @@ public class Dao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getString(5),
-                        rs.getString(6)
+                        rs.getString(6),
+                        getUserByCustomerID(rs.getInt(1))
 
                 ));
             }
@@ -475,7 +621,8 @@ public class Dao {
                         rs.getString(6),
                         rs.getString(7),
                         rs.getString(8),
-                        rs.getString(9));
+                        rs.getString(9),
+                        rs.getString(10));
             }
 
         }catch (Exception e){

@@ -9,8 +9,5 @@
         <module name="doancuoiki" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="doancuoiki" target="9" />
-    </bytecodeTargetLevel>
   </component>
 </project>

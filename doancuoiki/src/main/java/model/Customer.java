@@ -7,14 +7,25 @@ public class Customer {
     private String email;
     private String address;
     private String note;
+    private Account account;
 
-    public Customer(int customer_id, String fullname, String num_phone, String email, String address, String note) {
+    public Customer(int customer_id, String fullname, String email, String address, String num_phone, String note) {
         this.customer_id = customer_id;
         this.fullname = fullname;
         this.num_phone = num_phone;
         this.email = email;
         this.address = address;
         this.note = note;
+    }
+
+    public Customer(int customer_id, String fullname, String email, String address, String num_phone, String note, Account account) {
+        this.customer_id = customer_id;
+        this.fullname = fullname;
+        this.num_phone = num_phone;
+        this.email = email;
+        this.address = address;
+        this.note = note;
+        this.account = account;
     }
 
     public int getCustomer_id() {
@@ -63,5 +74,13 @@ public class Customer {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 }

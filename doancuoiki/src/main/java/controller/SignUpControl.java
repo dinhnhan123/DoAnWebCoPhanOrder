@@ -21,19 +21,28 @@ public class SignUpControl extends HttpServlet {
         String user = request.getParameter("user");
         String pass = request.getParameter("pass");
         String re_pass = request.getParameter("repass");
+        String fullname = request.getParameter("fullname");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        String note = request.getParameter("note");
         if(!pass.equals(re_pass)){
-            request.setAttribute("mess","Mật khẩu bạn vừa nhập lại không khớp, vui lòng kiểm tra lại");
+            request.setAttribute("messSignUp","Mật khẩu bạn vừa nhập lại không khớp, vui lòng kiểm tra lại");
             request.getRequestDispatcher("Login.jsp").forward(request,response);
 
         }else{
              Dao dao = new Dao();
             Account a = dao.CheckUserExist(user);
              if(a == null){
-              dao.signUp(user,pass);
+              dao.signUp(user,pass,fullname,email,phone,address,note);
+              Account account = dao.login(user,pass);
+                 HttpSession session = request.getSession();
+                 session.setAttribute("acc",account);
+                 session.setMaxInactiveInterval(1000);
               response.sendRedirect("homeControl");
 
              }else {
-              request.setAttribute("mess","Username đã tồn tại");
+              request.setAttribute("messSignUp","Username đã tồn tại");
               request.getRequestDispatcher("Login.jsp").forward(request,response);
 
              }

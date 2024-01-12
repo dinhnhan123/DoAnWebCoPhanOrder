@@ -16,10 +16,10 @@ public class Order implements Serializable {
     private  String fullname;
 
     private  String shipping_address;
+    private String num_phone;
 
     private List<Item> items;
     private int status;
-
 
     public Order(int order_id, int customer_id, int total_amount, int total_product_quantity, String order_status, String payment_method, String order_code, String fullname, String shipping_address) {
         this.order_id = order_id;
@@ -31,6 +31,19 @@ public class Order implements Serializable {
         this.order_code = order_code;
         this.fullname = fullname;
         this.shipping_address = shipping_address;
+    }
+
+    public Order(int order_id, int customer_id, int total_amount, int total_product_quantity, String order_status, String payment_method, String order_code, String fullname, String shipping_address, String num_phone) {
+        this.order_id = order_id;
+        this.customer_id = customer_id;
+        this.total_amount = total_amount;
+        this.total_product_quantity = total_product_quantity;
+        this.order_status = order_status;
+        this.payment_method = payment_method;
+        this.order_code = order_code;
+        this.fullname = fullname;
+        this.shipping_address = shipping_address;
+        this.num_phone = num_phone;
     }
 
     public String getShipping_address() {
@@ -128,10 +141,13 @@ public class Order implements Serializable {
         this.status = status;
     }
 
+    public String getNum_phone() {
+        return num_phone;
+    }
 
-
-
-
+    public void setNum_phone(String num_phone) {
+        this.num_phone = num_phone;
+    }
 
     public long gettotal() {
         long t = 0;
